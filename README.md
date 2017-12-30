@@ -9,16 +9,12 @@ It is one architecture that my Squad team decided to use, one of the guys had be
 
 Bellow all the references:
 
-* Reference 1: https://dzone.com/articles/onion-architecture-is-interesting *
-
-* Reference 2: http://jeffreypalermo.com/blog/the-onion-architecture-part-1/ *
-
-* Reference 3: http://jeffreypalermo.com/blog/the-onion-architecture-part-2/ *
-
-* Reference 4: http://jeffreypalermo.com/blog/the-onion-architecture-part-3/ *
-
-* Reference 5: http://jeffreypalermo.com/blog/the-onion-architecture-part-4/ *
-* Reference 6: http://tidyjava.com/onion-architecture-interesting/ * 
+* Reference 1: https://dzone.com/articles/onion-architecture-is-interesting
+* Reference 2: http://jeffreypalermo.com/blog/the-onion-architecture-part-1/
+* Reference 3: http://jeffreypalermo.com/blog/the-onion-architecture-part-2/
+* Reference 4: http://jeffreypalermo.com/blog/the-onion-architecture-part-3/
+* Reference 5: http://jeffreypalermo.com/blog/the-onion-architecture-part-4/
+* Reference 6: http://tidyjava.com/onion-architecture-interesting/  
 
 ### Running
 
