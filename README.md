@@ -14,7 +14,7 @@ Bellow all the references:
 * Reference 3: http://jeffreypalermo.com/blog/the-onion-architecture-part-2/
 * Reference 4: http://jeffreypalermo.com/blog/the-onion-architecture-part-3/
 * Reference 5: http://jeffreypalermo.com/blog/the-onion-architecture-part-4/
-* Reference 6: http://tidyjava.com/onion-architecture-interesting/  
+* Reference 6: http://tidyjava.com/onion-architecture-interesting/
 
 ### Running
 
@@ -70,6 +70,10 @@ The response if there are transactions there, should be something like this.
 "count": 10
 }
 ```
+PS: Initially i've been created a code to return statistics directly with DoubleSummaryStatistics.
+But running my code I could realize that the attribute name average is different from specification that is avg.
+Thinking about that N26 has a automatically tool to run and validate my code, I decided to create Statistics.java class with right attributes.
+
 
 If there is no content, the EntityNotFoundException will be launched.
 

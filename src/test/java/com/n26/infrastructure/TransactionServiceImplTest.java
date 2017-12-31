@@ -1,6 +1,7 @@
 package com.n26.infrastructure;
 
 import com.google.common.cache.CacheBuilder;
+import com.n26.domain.Statistics;
 import com.n26.domain.Transaction;
 import com.n26.domain.TransactionService;
 import com.n26.infrastructure.exception.EntityNotFoundException;
@@ -11,7 +12,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 
-import java.util.DoubleSummaryStatistics;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -36,7 +36,7 @@ public class TransactionServiceImplTest {
             cacheBuilder.maximumSize(cacheSize);
         }
         ConcurrentMap<Object, Object> map = cacheBuilder.build().asMap();
-        this.service = new TransactionServiceImpl(new ConcurrentMapCache("transaction", map, false));
+        this.service = new TransactionServiceImpl(new ConcurrentMapCache("transactionTest", map, false));
     }
 
     @Test
@@ -49,10 +49,10 @@ public class TransactionServiceImplTest {
         Transaction t2 = new Transaction(50.01D, Util.timestampGenerator());
         this.service.add(t2);
 
-        DoubleSummaryStatistics stats = this.service.get();
+        Statistics stats = this.service.get();
 
         assertThat(stats.getCount()).isEqualTo(2);
-        assertThat(stats.getAverage()).isEqualTo(25.50D);
+        assertThat(stats.getAvg()).isEqualTo(25.50D);
         assertThat(stats.getMax()).isEqualTo(50.01D);
         assertThat(stats.getMin()).isEqualTo(0.99D);
         assertThat(stats.getSum()).isEqualTo(51.00D);
@@ -69,7 +69,7 @@ public class TransactionServiceImplTest {
         this.service.add(t2);
 
         Thread.sleep(60001);
-        DoubleSummaryStatistics stats = this.service.get();
+        Statistics stats = this.service.get();
     }
 
     @Test
@@ -86,7 +86,7 @@ public class TransactionServiceImplTest {
             Transaction t3 = new Transaction(this.randomGenerator(), 1L);
             this.service.add(t3);
 
-            DoubleSummaryStatistics stats = this.service.get();
+            Statistics stats = this.service.get();
             assertThat(false);
         } catch (NoContentTimestampException ex) {
             assertThat(true);
@@ -113,9 +113,9 @@ public class TransactionServiceImplTest {
                 break;
             }
         }
-        DoubleSummaryStatistics stats = this.service.get();
+        Statistics stats = this.service.get();
         assertThat(stats.getCount()).isEqualTo(count);
-        assertThat(Util.roundAvoid(stats.getAverage(), 2)).isEqualTo(Util.roundAvoid(sum / count, 2));
+        assertThat(Util.roundAvoid(stats.getAvg(), 2)).isEqualTo(Util.roundAvoid(sum / count, 2));
         assertThat(stats.getMax()).isEqualTo(max);
         assertThat(stats.getMin()).isEqualTo(min);
         assertThat(Util.roundAvoid(stats.getSum(), 2)).isEqualTo(Util.roundAvoid(sum, 2));

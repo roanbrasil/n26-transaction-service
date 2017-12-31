@@ -17,6 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * ApiError.java
+ * Responsible in case of error in call return exception in json format
+ *
+ * @author roanbrasil
+ * @version 1.0
+ * @since 12-30-2017
+ */
 @Data
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NAME)
 public class ApiError {

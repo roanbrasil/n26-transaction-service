@@ -4,6 +4,14 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+/**
+ * Transaction.java
+ * Pojo responsible to get Transaction
+ *
+ * @author roanbrasil
+ * @version 1.0
+ * @since 12/30/2017
+ */
 @Data
 @Getter
 @Setter

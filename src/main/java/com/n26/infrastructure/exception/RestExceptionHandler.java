@@ -17,11 +17,26 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
+/**
+ * RestExceptionHandler.java
+ * Exception Handling class
+ *
+ * @author roanbrasil
+ * @version 1.0
+ * @since 12-30-2017
+ */
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
+    /**
+     *
+     * Handle Not Found Transaction Exception
+     *
+     * @param ex
+     * @return ResponseEntity<Object>
+     */
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex) {
         ApiError apiError = new ApiError(NOT_FOUND);
@@ -30,6 +45,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
+    /**
+     *
+     * Handling No Content Transaction Exception
+     *
+     * @param ex
+     * @return ResponseEntity<Object>
+     */
     @ExceptionHandler(NoContentTimestampException.class)
     protected ResponseEntity<Object> handleEntityNoContentTimestamp(NoContentTimestampException ex) {
         ApiError apiError = new ApiError(NO_CONTENT);

@@ -1,6 +1,7 @@
 package com.n26.infrastructure;
 
 import com.google.common.cache.CacheBuilder;
+import com.n26.domain.Statistics;
 import com.n26.domain.Transaction;
 import com.n26.domain.TransactionService;
 import com.n26.infrastructure.exception.EntityNotFoundException;
@@ -16,6 +17,14 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+/**
+ * TransactionServiceImpl.java
+ * Provide service to Transaction Requisition.
+ *
+ * @author roanbrasil
+ * @version 1.0
+ * @since 12-30-2017
+ */
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
@@ -26,21 +35,31 @@ public class TransactionServiceImpl implements TransactionService {
     private final ConcurrentMapCache cache;
 
     public TransactionServiceImpl(ConcurrentMapCache cache) {
-            this.cache = cache;
+        this.cache = cache;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Autowired
-    public TransactionServiceImpl(){
+    public TransactionServiceImpl() {
         CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder();
         long cacheSize = CACHE_LIMIT;
+        //if cacheSize is not setting up, at this point set up the cache size
         if (cacheSize >= 0) {
             cacheBuilder.maximumSize(cacheSize);
         }
         ConcurrentMap<Object, Object> map = cacheBuilder.build().asMap();
         this.cache = new ConcurrentMapCache("transaction", map, false);
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void add(Transaction transaction) throws NoContentTimestampException {
+        //if timestamp is older than 60 seconds OR if in the correct UTC timezone (diference btw transaction timestamp and
+        // requisition timestamp cannot be negative)
         if (!validTimestampAge(transaction.getTimestamp())
                 || !validTimeStampCorrectZone(transaction.getTimestamp())) {
             throw new NoContentTimestampException(Transaction.class, "timestamp", String.valueOf(transaction.getTimestamp()));
@@ -48,19 +67,29 @@ public class TransactionServiceImpl implements TransactionService {
         this.cache.putIfAbsent(transaction.getTimestamp(), transaction.getAmount());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public DoubleSummaryStatistics get() throws EntityNotFoundException {
+    public Statistics get() throws EntityNotFoundException {
         Long lastIndex = Util.timestampGenerator();
         Long firstIndex = lastIndex - LIMIT_TIMESTAMP;
 
         ConcurrentMap<Object, Object> map = this.cache.getNativeCache();
 
+        //get only transaction in a range of 60 seconds age available
         Stream streamCache = LongStream.rangeClosed(firstIndex, lastIndex)
                 .mapToObj(index -> map.get(index))
                 .filter(Objects::nonNull);
 
-        DoubleSummaryStatistics stats = streamCache.mapToDouble(amount -> (Double) amount).summaryStatistics();
+        //setup statistics information
+        DoubleSummaryStatistics doubleSummaryStatistics = streamCache.mapToDouble(amount -> (Double) amount).summaryStatistics();
 
+        Statistics stats = new Statistics(doubleSummaryStatistics.getSum(),
+                doubleSummaryStatistics.getAverage(), doubleSummaryStatistics.getMax(),
+                doubleSummaryStatistics.getMin(), doubleSummaryStatistics.getCount()
+        );
+        //if there is just transaction older than 60 seconds, this exception will be launched
         if (stats.getCount() == 0) {
             throw new EntityNotFoundException(Object.class,
                     "firstIndex", String.valueOf(firstIndex), "lastIndex", String.valueOf(lastIndex));

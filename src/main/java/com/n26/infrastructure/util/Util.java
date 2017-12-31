@@ -4,6 +4,14 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneId;
 
+/**
+ * Util.java
+ * Utilities to used in the code to avoid repeat code.
+ *
+ * @author roanbrasil
+ * @version 1.0
+ * @since 12-30-2017
+ */
 public class Util {
     public static long timestampGenerator() {
         return Timestamp.valueOf(Instant.ofEpochMilli(System.currentTimeMillis())

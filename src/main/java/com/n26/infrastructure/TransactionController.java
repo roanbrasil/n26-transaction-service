@@ -1,6 +1,7 @@
 package com.n26.infrastructure;
 
 import com.n26.api.TransactionAPI;
+import com.n26.domain.Statistics;
 import com.n26.domain.Transaction;
 import com.n26.domain.TransactionService;
 import com.n26.infrastructure.exception.EntityNotFoundException;
@@ -10,8 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.DoubleSummaryStatistics;
-
+/**
+ * TransactionController.java
+ * Controller responsible to receive http request to transaction events.
+ *
+ * @author roanbrasil
+ * @version 1.0
+ * @since 12-30-2017
+ */
 @Slf4j
 @CrossOrigin
 @RestController
@@ -24,6 +31,9 @@ public class TransactionController implements TransactionAPI {
         this.service = service;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @PostMapping(value = "/transactions", consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
@@ -35,16 +45,25 @@ public class TransactionController implements TransactionAPI {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @GetMapping(value = "/statistics", produces = "application/json")
-    public DoubleSummaryStatistics get() throws EntityNotFoundException {
+    public Statistics get() throws EntityNotFoundException {
         long startTime = System.currentTimeMillis();
-        DoubleSummaryStatistics stats = this.service.get();
+        Statistics stats = this.service.get();
         log.info("Collect Transactions Statistics [statistics={}, elapsedTime={}]",
                 stats.toString(), elapsedTimeSince(startTime));
         return stats;
     }
 
+    /**
+     * Calculate de range of time between the begin and end of requisition to set up in log
+     *
+     * @param startTime
+     * @return long
+     */
     private long elapsedTimeSince(long startTime) {
         return System.currentTimeMillis() - startTime;
     }
