@@ -1,6 +1,5 @@
 package com.n26.infrastructure;
 
-import com.n26.api.TransactionAPI;
 import com.n26.domain.Statistics;
 import com.n26.domain.Transaction;
 import com.n26.domain.TransactionService;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @CrossOrigin
 @RestController
-public class TransactionController implements TransactionAPI {
+public class TransactionController {
 
     private final TransactionService service;
 
@@ -31,10 +30,7 @@ public class TransactionController implements TransactionAPI {
         this.service = service;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
+
     @PostMapping(value = "/transactions", consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public void add(@RequestBody Transaction transaction) throws NoContentTimestampException {
@@ -45,10 +41,6 @@ public class TransactionController implements TransactionAPI {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     @GetMapping(value = "/statistics", produces = "application/json")
     public Statistics get() throws EntityNotFoundException {
         long startTime = System.currentTimeMillis();

@@ -22,19 +22,10 @@ public class TransactionServiceImplTest {
     @Autowired
     private TransactionService service;
 
-    private static Double MIN_DOUBLE_RANGE = 0.01D;
-
-    private static Double MAX_DOUBLE_RANGE = 10000.00D;
-
-    private static long CACHE_LIMIT = 100000;
 
     @Before
     public void setUp() {
         CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder();
-        long cacheSize = CACHE_LIMIT;
-        if (cacheSize >= 0) {
-            cacheBuilder.maximumSize(cacheSize);
-        }
         ConcurrentMap<Object, Object> map = cacheBuilder.build().asMap();
         this.service = new TransactionServiceImpl(new ConcurrentMapCache("transactionTest", map, false));
     }
@@ -44,9 +35,7 @@ public class TransactionServiceImplTest {
         Transaction t1 = new Transaction(0.99D, Util.timestampGenerator());
         this.service.add(t1);
 
-        Thread.sleep(1000);
-
-        Transaction t2 = new Transaction(50.01D, Util.timestampGenerator());
+        Transaction t2 = new Transaction(50.01D, Util.timestampGenerator() - 1000);
         this.service.add(t2);
 
         Statistics stats = this.service.get();
@@ -59,39 +48,17 @@ public class TransactionServiceImplTest {
     }
 
     @Test(expected = EntityNotFoundException.class)
-    public void testCollectZeroTransactionsOnStastitics() throws NoContentTimestampException, InterruptedException, EntityNotFoundException {
-        Transaction t1 = new Transaction(this.randomGenerator(),
-                (Util.timestampGenerator()));
-        this.service.add(t1);
+    public void testCollectZeroTransactionsOnStastitics() throws NoContentTimestampException, EntityNotFoundException {
 
-        Transaction t2 = new Transaction(this.randomGenerator(),
-                Util.timestampGenerator());
-        this.service.add(t2);
-
-        Thread.sleep(60001);
-        Statistics stats = this.service.get();
+        this.service.get();
     }
 
-    @Test
-    public void testAddTransactionOlderThan60Seconds() throws NoContentTimestampException, InterruptedException, EntityNotFoundException {
-        try {
-            Transaction t1 = new Transaction(this.randomGenerator(),
-                    (Util.timestampGenerator() - 61000l));
-            this.service.add(t1);
+    @Test(expected = NoContentTimestampException.class)
+    public void testAddTransactionOlderThan60Seconds() throws NoContentTimestampException {
 
-            Transaction t2 = new Transaction(this.randomGenerator(),
-                    Util.timestampGenerator() - 61000l);
-            this.service.add(t2);
-
-            Transaction t3 = new Transaction(this.randomGenerator(), 1L);
-            this.service.add(t3);
-
-            Statistics stats = this.service.get();
-            assertThat(false);
-        } catch (NoContentTimestampException ex) {
-            assertThat(true);
-        }
-
+        Transaction t1 = new Transaction(this.randomGenerator(),
+                (Util.timestampGenerator() - 61000));
+        this.service.add(t1);
     }
 
     @Test
@@ -122,6 +89,8 @@ public class TransactionServiceImplTest {
     }
 
     private Double randomGenerator() {
+        Double MIN_DOUBLE_RANGE = 0.01D;
+        Double MAX_DOUBLE_RANGE = 10000.00D;
         return Util.roundAvoid(ThreadLocalRandom.current().nextDouble(MIN_DOUBLE_RANGE, MAX_DOUBLE_RANGE), 2);
     }
 

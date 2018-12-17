@@ -30,7 +30,6 @@ public class TransactionServiceImpl implements TransactionService {
 
     public static final int LIMIT_TIMESTAMP = 60000;
 
-    private static long CACHE_LIMIT = 10000;
 
     private final ConcurrentMapCache cache;
 
@@ -44,11 +43,6 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     public TransactionServiceImpl() {
         CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder();
-        long cacheSize = CACHE_LIMIT;
-        //if cacheSize is not setting up, at this point set up the cache size
-        if (cacheSize >= 0) {
-            cacheBuilder.maximumSize(cacheSize);
-        }
         ConcurrentMap<Object, Object> map = cacheBuilder.build().asMap();
         this.cache = new ConcurrentMapCache("transaction", map, false);
     }
