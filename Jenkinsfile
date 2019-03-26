@@ -6,10 +6,10 @@ pipeline {
         checkout scm
       }
     }
-     stage ('build'){
-            steps {
-		sh './mvnw install dockerfile:build'
-             }
+    stage('build') {
+      steps {
+        sh './mvnw install dockerfile:build'
+      }
     }
     stage ('deploy'){
             steps {
