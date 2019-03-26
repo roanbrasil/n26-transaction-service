@@ -1,10 +1,7 @@
-FROM openjdk:8-jre-alpine
-
-RUN addgroup -S n26 && adduser -S -g n26 n26
-USER n26
-
-COPY target/n26-transaction-service.jar app.jar
-
-ENV JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
-
-ENTRYPOINT exec java -jar /app.jar
+FROM openjdk:8-jdk-alpine
+VOLUME /tmp
+ARG DEPENDENCY=target/dependency
+COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY ${DEPENDENCY}/META-INF /app/META-INF
+COPY ${DEPENDENCY}/BOOT-INF/classes /app
+ENTRYPOINT ["java","-cp","app:app/lib/*","com.n26.Application"]

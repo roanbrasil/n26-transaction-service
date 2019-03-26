@@ -8,6 +8,7 @@ import com.n26.infrastructure.exception.NoContentTimestampException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -42,12 +43,12 @@ public class TransactionController {
     }
 
     @GetMapping(value = "/statistics", produces = "application/json")
-    public Statistics get() throws EntityNotFoundException {
+    public ResponseEntity<Statistics> get() throws EntityNotFoundException {
         long startTime = System.currentTimeMillis();
         Statistics stats = this.service.get();
         log.info("Collect Transactions Statistics [statistics={}, elapsedTime={}]",
                 stats.toString(), elapsedTimeSince(startTime));
-        return stats;
+        return ResponseEntity.ok().body(stats);
     }
 
     /**

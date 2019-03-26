@@ -73,7 +73,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         //get only transaction in a range of 60 seconds age available
         Stream streamCache = LongStream.rangeClosed(firstIndex, lastIndex)
-                .mapToObj(index -> map.get(index))
+                .mapToObj(map::get)
                 .filter(Objects::nonNull);
 
         //setup statistics information
