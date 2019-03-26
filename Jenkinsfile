@@ -1,10 +1,8 @@
-pipeline {
-	agent { docker { image 'maven:3.3.9' } }
-        stages {
-		stage('build') {
-		   steps {
-			sh 'mvn --version'
-		   }
-		}  
-	}
+node {
+
+   stage('Clone Repository') {
+        // Get some code from a GitHub repository
+        git 'https://github.com/roanbrasil/n26-transaction-service.git'
+    
+   }
 }
